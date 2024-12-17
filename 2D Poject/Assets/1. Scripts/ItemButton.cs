@@ -1,24 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ItemButton : MonoBehaviour
 {
-    [SerializeField] Image itemImage; 
+    [SerializeField] Image itemImage;
+    [SerializeField] TMP_Text tmpText;
 
     private ItemInfo itemInfo;
+
     public ItemInfo ItemInfo
     {
         get { return itemInfo; }
-        set { itemInfo = value; SetItemImage(itemInfo.itemData.icon); }
+        set { itemInfo = value; SetItemData(itemInfo); }
     }
 
-    public void SetItemImage(Sprite sprite)
+    public void SetItemData(ItemInfo item)
     {
-        itemImage.sprite = sprite;
+        if (item != null)
+            itemImage.sprite = item.itemData.icon;
 
-        if (sprite == null )
+        if (item == null )
         {
             // 알파값 없애기
             var color = itemImage.color;
@@ -26,6 +30,9 @@ public class ItemButton : MonoBehaviour
             // 알파값 제거
             color.a = 0;
             itemImage.color = color;
+
+            // 개수 없음
+            tmpText.text = "";
         }
         else
         {
@@ -35,6 +42,8 @@ public class ItemButton : MonoBehaviour
             // 알파값 조정
             color.a = 1.0f;
             itemImage.color = color;
+
+            tmpText.text = "" + item.amount;
         }
     }
 }
