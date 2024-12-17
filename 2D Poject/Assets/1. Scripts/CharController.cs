@@ -8,7 +8,7 @@ public class CharController : MonoBehaviour
     [SerializeField] float moveSpeed;
     [SerializeField] float jumpSpeed;
     [SerializeField] float groundDis;
-    bool grounded = true;
+    public bool grounded = true;
     
     InputAction moveInput;
     InputAction jumpInput;
@@ -26,78 +26,43 @@ public class CharController : MonoBehaviour
     [SerializeField] float maxDis = 4.0f;
 
 
-    void Start()
+    IEnumerator Start()
     {
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     
-        rb = GetComponent<Rigidbody2D>();
-        UnityEngine.InputSystem.PlayerInput Input = GetComponent<UnityEngine.InputSystem.PlayerInput>();
-        // "Move" 라는 이름을 가진 Action 을 가져옴(ActionMap이 아님)
+        PlayerInput Input = GetComponent<PlayerInput>();
+        // "Move", "Jump" 라는 이름을 가진 Action 을 가져옴(ActionMap이 아님)
         moveInput = Input.actions["Move"];
         jumpInput = Input.actions["Jump"];
 
         camOffSet =  mainCam.transform.position - transform.position;
+
+        yield return new WaitForSeconds(3.0f);
+        
+        Debug.Log(LayerMask.LayerToName(GetComponentInChildren<ItemGetter>().gameObject.layer));
     }
 
     void Update()
     {
         Vector2 moveValue = moveInput.ReadValue<Vector2>();
-        Debug.Log(moveValue);
 
-        spriteRenderer.flipX = moveValue.x < 0;
-        
+        if (moveValue.x != 0)
+            spriteRenderer.flipX = moveValue.x < 0;
+
         animator.SetFloat("Speed", Mathf.Abs(moveValue.x));
-
-        transform.position += new Vector3(moveValue.x * moveSpeed, 0, 0) * Time.deltaTime;
+        
+        // transform.position += new Vector3(moveValue.x * moveSpeed, 0, 0) * Time.deltaTime;
+        rb.velocity = new Vector2(moveValue.x * moveSpeed, rb.velocity.y);
 
         if (jumpInput.triggered && grounded)
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, Mathf.Infinity, 1 << LayerMask.NameToLayer("Ground"));
-
-            if(hit.distance <= groundDis)
-            {
-                Debug.Log(hit.distance);
-
-                rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
-                animator.Play("Jump");
-                StartCoroutine(JumpEndCheck());
-            }
+            rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse);
+            animator.Play("Jump");
         }
     }
 
-    IEnumerator JumpEndCheck() 
-    {
-        grounded = false;
-
-        yield return new WaitForFixedUpdate();
-
-        while (true)
-        {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, Mathf.Infinity, 1 << LayerMask.NameToLayer("Ground"));
-
-            if (hit.distance <= groundDis)
-            {
-                animator.Play("Idle");
-                break;
-            }
-            yield return null;
-        }
-
-        grounded = true;
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.GetContact(0).normal == Vector2.up)
-        {
-            animator.SetBool("Grounded", true);
-        }
-    }
-
-    void GroundCheck()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundDis);
-    }
     private void LateUpdate()
     {
         var CharPosition = transform.position + camOffSet;
