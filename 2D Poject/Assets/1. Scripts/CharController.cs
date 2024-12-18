@@ -1,10 +1,26 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[Serializable]
+public struct DamageFieldData
+{
+    public float distance;
+}
+
 public class CharController : MonoBehaviour
 {
+    private const float jumpTestValue = 0.3f;
+
+    // 해시값으로 변환해서 해당 해시값으로 애니메이션을 찾게 할수 있음(최적화)
+    private static readonly int Speed1 = Animator.StringToHash("Speed");
+    private static readonly int Attack = Animator.StringToHash("Attack");
+
+    private static readonly int Ground = Animator.StringToHash("Ground");
+
     [SerializeField] float moveSpeed;
     [SerializeField] float jumpSpeed;
     [SerializeField] float groundDis;
@@ -12,7 +28,11 @@ public class CharController : MonoBehaviour
     
     InputAction moveInput;
     InputAction jumpInput;
-    
+
+    public List<CButton> buttons;
+    public List<DamageField> damageFields;
+    public List<DamageFieldData> damageFieldDatas;
+
     [SerializeField] Animator animator;
 
     public Rigidbody2D rb;
@@ -38,16 +58,26 @@ public class CharController : MonoBehaviour
         jumpInput = Input.actions["Jump"];
 
         camOffSet =  mainCam.transform.position - transform.position;
+
+        foreach (var button in buttons)
+        {
+            // button.AddListener(() => { }) : 임시로 아무내용없는 함수 추가
+            button.AddListener(FireSkill);
+        }
     }
 
     void Update()
     {
         Vector2 moveValue = moveInput.ReadValue<Vector2>();
 
+        if(!canMove)
+            moveValue = Vector2.zero;
+
         if (moveValue.x != 0)
             spriteRenderer.flipX = moveValue.x < 0;
 
-        animator.SetFloat("Speed", Mathf.Abs(moveValue.x));
+        // 문자열 말고 미리 해시값을 계산한 후 그 해시값으로 찾기에 더 최적화됨
+        animator.SetFloat(Speed1, Mathf.Abs(moveValue.x));
         
         // transform.position += new Vector3(moveValue.x * moveSpeed, 0, 0) * Time.deltaTime;
         rb.velocity = new Vector2(moveValue.x * moveSpeed, rb.velocity.y);
@@ -89,4 +119,42 @@ public class CharController : MonoBehaviour
 
         mainCam.transform.position = newPos;*/
     }
+
+    bool canMove = true;
+
+    void CanMove(int bMove)
+    {
+        canMove = bMove == 1;
+    }
+
+    void FireSkill()
+    {
+        animator.Rebind();
+        // Attack변수에 있는 해쉬값으로 애니메이션 스테이트를 찾음
+        animator.Play(Attack);
+    }
+
+    void FireDamageField(int idx)
+    {
+        GameObject go = Instantiate(damageFields[idx].gameObject);
+        go.GetComponent<DamageField>().MyOwnerTag = "Player";
+        go.transform.position = transform.position + transform.right * damageFieldDatas[idx].distance;
+        Destroy(go, 3.0f);
+    }
+
+    /*IEnumerator FireSkillCoroutin()
+    {
+        animator.Rebind();
+        animator.Play("Attack");
+
+        yield return null;
+
+        var curState = animator.GetCurrentAnimatorStateInfo(0);
+
+        // 애니메이션 진행시간이 1 미만 이고, Attack 애니메이션 일때
+        while (1.0 > curState.normalizedTime && curState.IsName("Attack"))
+        {
+            yield return null;
+        }
+    }*/
 }
