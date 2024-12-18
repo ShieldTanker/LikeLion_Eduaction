@@ -15,7 +15,7 @@ public class CharController : MonoBehaviour
     
     [SerializeField] Animator animator;
 
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
     SpriteRenderer spriteRenderer;
 
     [SerializeField] private Camera mainCam;
@@ -26,7 +26,7 @@ public class CharController : MonoBehaviour
     [SerializeField] float maxDis = 4.0f;
 
 
-    IEnumerator Start()
+    void Start()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -38,10 +38,6 @@ public class CharController : MonoBehaviour
         jumpInput = Input.actions["Jump"];
 
         camOffSet =  mainCam.transform.position - transform.position;
-
-        yield return new WaitForSeconds(3.0f);
-        
-        Debug.Log(LayerMask.LayerToName(GetComponentInChildren<ItemGetter>().gameObject.layer));
     }
 
     void Update()
