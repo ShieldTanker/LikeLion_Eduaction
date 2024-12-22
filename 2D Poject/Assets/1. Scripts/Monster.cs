@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Monster : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class Monster : MonoBehaviour
     public float speed;
     public int switchCount;
     private int moveCount;
+
+    public float hp;
+    public float maxHp;
+    public Slider hpSlider;
 
     public Vector2 direction;
 
@@ -34,5 +39,19 @@ public class Monster : MonoBehaviour
             spriteRenderer.flipX = direction.x < 0;
             moveCount = 0;
         }
-    }    
+    }
+
+    public void HitDamage(float damage)
+    {
+        hp -= damage;
+        
+        if (hp > 0)
+        {
+            hpSlider.value = hp / maxHp;
+        }
+        else if (hp <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
 }

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class ItemGetter : MonoBehaviour
 {
     public Inventory inventory;
-
+    public LayerMask layer;
     public RectTransform itemRectTransform;
     public Canvas canvas;
 
@@ -68,6 +68,8 @@ public class ItemGetter : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.gameObject.layer != layer)
+            return;
         Debug.Log(other);
 
         // 먹었을때 움직일 오브젝트를 생성하고 newObject에 할당

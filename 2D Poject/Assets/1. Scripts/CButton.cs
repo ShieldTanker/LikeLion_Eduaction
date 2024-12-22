@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class CButton : MonoBehaviour
 {
     [SerializeField] private Button button;
+    public int idx;
 
     void Awake()
     {

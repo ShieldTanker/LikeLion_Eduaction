@@ -29,6 +29,7 @@ public class CharController : MonoBehaviour
     InputAction moveInput;
     InputAction jumpInput;
 
+    int damageFieldIdx;
     public List<CButton> buttons;
     public List<DamageField> damageFields;
     public List<DamageFieldData> damageFieldDatas;
@@ -45,6 +46,10 @@ public class CharController : MonoBehaviour
     
     [SerializeField] float maxDis = 4.0f;
 
+    public Camera camera;
+    public Canvas canvas;
+    public HPBar hpBar;
+    public Transform hpBarPos;
 
     void Start()
     {
@@ -62,8 +67,11 @@ public class CharController : MonoBehaviour
         foreach (var button in buttons)
         {
             // button.AddListener(() => { }) : 임시로 아무내용없는 함수 추가
-            button.AddListener(FireSkill);
+            button.AddListener(() => FireSkill(button.idx));
         }
+
+        GameObject go = Instantiate(hpBar.gameObject, canvas.transform);
+        go.GetComponent<HPBar>().UpdateOwner(hpBarPos, camera);
     }
 
     void Update()
@@ -127,8 +135,9 @@ public class CharController : MonoBehaviour
         canMove = bMove == 1;
     }
 
-    void FireSkill()
+    void FireSkill(int idx)
     {
+        damageFieldIdx = idx;
         animator.Rebind();
         // Attack변수에 있는 해쉬값으로 애니메이션 스테이트를 찾음
         animator.Play(Attack);
@@ -136,9 +145,9 @@ public class CharController : MonoBehaviour
 
     void FireDamageField(int idx)
     {
-        GameObject go = Instantiate(damageFields[idx].gameObject);
+        GameObject go = Instantiate(damageFields[damageFieldIdx].gameObject);
         go.GetComponent<DamageField>().MyOwnerTag = "Player";
-        go.transform.position = transform.position + transform.right * damageFieldDatas[idx].distance;
+        go.transform.position = transform.position + transform.right * damageFieldDatas[damageFieldIdx].distance;
         Destroy(go, 3.0f);
     }
 

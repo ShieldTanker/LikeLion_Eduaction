@@ -126,6 +126,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventory: {fileID: 0}
+  layer:
+    serializedVersion: 2
+    m_Bits: 0
   itemRectTransform: {fileID: 0}
   canvas: {fileID: 0}
   itemPrefab: {fileID: 8023917048588590799, guid: 0330ddd6265089e4f8588129a9151c01, type: 3}
@@ -237,6 +240,7 @@ Transform:
   - {fileID: 2075164023811262671}
   - {fileID: 1778100233592642960}
   - {fileID: 6450083656903481986}
+  - {fileID: 7703218319967625082}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7650275337306683575
@@ -328,12 +332,28 @@ MonoBehaviour:
   jumpSpeed: 7
   groundDis: 0.2
   grounded: 1
+  buttons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  damageFields:
+  - {fileID: 8746440473092656313, guid: bcdbfac407f0f164f816f7fd806ae581, type: 3}
+  - {fileID: 8746440473092656313, guid: 39e37cf631389e14dac271d776ab9240, type: 3}
+  - {fileID: 8746440473092656313, guid: 57b03c94e1c34d44799b49abdacbdf16, type: 3}
+  damageFieldDatas:
+  - distance: 1.5
+  - distance: 2
+  - distance: 3
   animator: {fileID: 6867188505518643223}
   rb: {fileID: 0}
   mainCam: {fileID: 0}
   camSpeed: 5
   camOffSet: {x: 0, y: 0, z: 0}
   maxDis: 4
+  camera: {fileID: 0}
+  canvas: {fileID: 0}
+  hpBar: {fileID: 5102665045881409455, guid: 6623527cd64383d468cdda671b5df8e0, type: 3}
+  hpBarPos: {fileID: 0}
 --- !u!114 &9178218266251984446
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,6 +446,37 @@ CapsuleCollider2D:
   m_Offset: {x: -0.05, y: 0.7}
   m_Size: {x: 1, y: 1.6}
   m_Direction: 0
+--- !u!1 &3349838719817295929
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7703218319967625082}
+  m_Layer: 7
+  m_Name: Hp_Bar_Position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7703218319967625082
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3349838719817295929}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3508491136692051479}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3627643553255516646
 GameObject:
   m_ObjectHideFlags: 0
@@ -439,7 +490,7 @@ GameObject:
   - component: {fileID: 7492983910290515882}
   m_Layer: 7
   m_Name: HitCollision
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
